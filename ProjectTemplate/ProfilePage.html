@@ -7,9 +7,48 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
 
     <!--YOUR OWN JAVASCRIPT CAN GO RIGHT HERE-->
+    <script src="https://kit.fontawesome.com/b696c7130a.js" crossorigin="anonymous"></script>
     <script type="text/javascript">
 
-        var PictureURL = "defaultPic.png";
+        var PictureURL = "pizza.jpg";
+
+        function populateProfile() {
+            var id = localStorage.UserId;
+            var pass = localStorage.UserPass;
+
+            var webMethod = "ProjectServices.asmx/PopulateProfile";
+            var parameters = "{\"uid\":\"" + encodeURI(id) + "\", \"pass\":\"" + encodeURI(pass) + "\"}";
+
+            //jQuery ajax method
+            $.ajax({
+                type: "POST",
+                url: webMethod,
+                data: parameters,
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (msg) {
+                    var user = msg.d;
+                    var skillArray = user.Skills.split(",");
+                    var topicArray = user.Assistance.split(",");
+                    profileType("mentor");
+                    document.getElementById("profileImage").src = user.URL;
+                    document.getElementById("fNameId").value = user.First;
+                    document.getElementById("lNameId").value = user.Last;
+                    document.getElementById("emailId").value = user.Email;
+                    document.getElementById("bioId").value = user.Bio;
+
+                    document.getElementById("skill1").value = skillArray[0];
+                    document.getElementById("skill2").value = skillArray[1];
+                    document.getElementById("skill3").value = skillArray[2];
+                    document.getElementById("skill4").value = skillArray[3];
+                    document.getElementById("skill5").value = skillArray[4];
+
+                },
+                error: function (e) {
+                    alert("this code will only execute if javascript is unable to access the webservice");
+                }
+            });
+        }
 
         function profileType(t) {
             switch (t) {
@@ -48,8 +87,11 @@
         }
 
         function createProfile(UserFirst, UserLast, UserPhone, UserEmail, PictureURL, MentorStatus, Skills, Assistance, AboutMe, AccountStatus) {
+            var id = localStorage.UserId;
+            var pass = localStorage.UserPass;
+
             var webMethod = "ProjectServices.asmx/CreateProfile";
-            var parameters = "{\"UserFirst\":\"" + encodeURI(UserFirst) + "\", \"UserLast\":\"" + encodeURI(UserLast) + "\", \"UserPhone\":\"" + encodeURI(UserPhone) + "\", \"UserEmail\":\"" + encodeURI(UserEmail) + "\", \"PictureURL\":\"" + encodeURI(PictureURL) + "\", \"MentorStatus\":\"" + encodeURI(MentorStatus) + "\", \"Skills\":\"" + encodeURI(Skills) + "\", \"Assistance\":\"" + encodeURI(Assistance) + "\", \"AboutMe\":\"" + encodeURI(AboutMe) + "\", \"AccountStatus\":\"" + encodeURI(AccountStatus) + "\"} ";
+            var parameters = "{\"uid\":\"" + encodeURI(id) + "\", \"pass\":\"" + encodeURI(pass) + "\", \"UserFirst\":\"" + encodeURI(UserFirst) + "\", \"UserLast\":\"" + encodeURI(UserLast) + "\", \"UserPhone\":\"" + encodeURI(UserPhone) + "\", \"UserEmail\":\"" + encodeURI(UserEmail) + "\", \"PictureURL\":\"" + encodeURI(PictureURL) + "\", \"MentorStatus\":\"" + encodeURI(MentorStatus) + "\", \"Skills\":\"" + encodeURI(Skills) + "\", \"Assistance\":\"" + encodeURI(Assistance) + "\", \"AboutMe\":\"" + encodeURI(AboutMe) + "\", \"AccountStatus\":\"" + encodeURI(AccountStatus) + "\"} ";
 
             $.ajax({
                 type: "POST",
@@ -67,14 +109,25 @@
         }
 
         function gatherInfo() {
+            var skill1 = document.getElementById("skill1").value;
+            var skill2 = document.getElementById("skill2").value;
+            var skill3 = document.getElementById("skill3").value;
+            var skill4 = document.getElementById("skill4").value;
+            var skill5 = document.getElementById("skill5").value;
+
+            var topic1 = document.getElementById("topic1").value;
+            var topic2 = document.getElementById("topic2").value;
+            var topic3 = document.getElementById("topic3").value;
+            var topic4 = document.getElementById("topic4").value;
+            var topic5 = document.getElementById("topic5").value;
 
             var UserFirst = document.getElementById("fNameId").value;
             var UserLast = document.getElementById("lNameId").value;
             var UserPhone = document.getElementById("phoneId").value;
             var UserEmail = document.getElementById("emailId").value;
             var MentorStatus = document.getElementById("mentorStatusId").value;
-            var Skills = "Yes";
-            var Assistance = "Yes";
+            var Skills = skill1 + "," + skill2 + "," + skill3 + "," + skill4 + "," + skill5;
+            var Assistance = topic1 + "," + topic2 + "," + topic3 + "," + topic4 + "," + topic5;
             var AboutMe = document.getElementById("bioId").value;
             var AccountStatus = "Active";
 
@@ -83,9 +136,111 @@
             createProfile(UserFirst, UserLast, UserPhone, UserEmail, PictureURL, MentorStatus, Skills, Assistance, AboutMe, AccountStatus);
         }
     </script>
-    <!--END OF YOUR OWN JAVASCRIPT-->
-    <!--AND YOUR OWN CSS CAN GO HERE AS WELL-->
+
+
     <style>
+        @import url('https://fonts.googleapis.com/css2?family=Baloo+Thambi+2:wght@500&display=swap');
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            list-style: none;
+            text-decoration: none;
+            font-family: 'Baloo Thambi 2', cursive;
+        }
+
+        body {
+            background-color: #222244;
+        }
+
+        html {
+            height: 100%;
+            width: 100%;
+        }
+
+        .wrapper {
+            display: flex;
+            position: relative;
+        }
+
+            .wrapper .sidebar {
+                position: fixed;
+                width: 200px;
+                height: 100%;
+                background-image: linear-gradient(to bottom right, #CC2E5D, #FF5858);
+                padding: 30px 0;
+            }
+
+                .wrapper .sidebar h2 {
+                    color: #FFF;
+                    text-transform: uppercase;
+                    text-align: center;
+                    margin-bottom: 30px;
+                }
+
+                .wrapper .sidebar ul li {
+                    padding: 15px;
+                    border-bottom: 1px solid rgba(0,0,0,0.05);
+                    border-top: 1px solid rgba(225,225,225,0.05);
+                }
+
+                    .wrapper .sidebar ul li a {
+                        color: #bdb8d7;
+                        display: block;
+                    }
+
+                        .wrapper .sidebar ul li a .fas {
+                            width: 25px;
+                        }
+
+                    .wrapper .sidebar ul li:hover {
+                        background: #CC2E5D;
+                    }
+
+                        .wrapper .sidebar ul li:hover a {
+                            color: #FFF;
+                        }
+
+            .wrapper .main_content {
+                width: 100%;
+                margin-left: 200px;
+                color: #FFF;
+            }
+
+                .wrapper .main_content .header {
+                    padding: 20px;
+                    background: #fff;
+                    color: #717171;
+                    border-bottom: 1px solid #e0e4e8;
+                }
+
+        p.title, h2.welcome {
+            font-size: 3vh;
+        }
+
+        .info {
+            margin-left: 5vw;
+            margin-top: 2vh;
+        }
+
+        .btn {
+            background: #CC2E5D;
+            border: 2px solid #000;
+            font-family: "montserrat",sans-serif;
+            text-transform: uppercase;
+            padding: 12px 20px;
+            min-width: 200px;
+            margin: 10px;
+            cursor: pointer;
+            transition: color 0.4s linear;
+            position: relative;
+        }
+
+        .input {
+            margin-bottom: 5vh;
+        }
+
         #profile-container {
             width: 150px;
             height: 150px;
@@ -100,151 +255,126 @@
                 height: 150px;
             }
 
-        #skillsInputs {
-            display: none;
-            float: left;
-            width: 15vw;
-            padding-top: 30vh;
-        }
-
-        #topicsInputs {
-            display: none;
-            float: left;
-            width: 15vw;
-            padding-top: 30vh;
-        }
-
-        body {
-            background-color: blue;
-            background-image: linear-gradient(to bottom right, lightblue, pink);
-        }
-
-        html {
-            height: 100%;
-            width: 100%;
-        }
-
-        #info {
-            width: 30vw;
-            float: left;
-            padding-left: 10vw;
-            padding-top: 5vh;
-        }
-
-        #profileForm {
-            padding-top: 5vh;
-        }
-
-        td {
-            padding-top: 2vh;
-        }
-
-        input {
-            width: 10vw;
-            height: 3vh;
-        }
-
-        #btn {
-            background-color: transparent;
-            color: black;
-            border: 2px solid #555555;
-            margin-top: 25px;
-            height: 30px;
+        li.selected {
+            background: #CC2E5D;
         }
     </style>
-    <!--END OF YOUR OWN CSS-->
 </head>
-<body>
-    <div id="info">
-        <div id="profile-container">
-            <image id="profileImage" src="defaultPic.png" />
+<body onload="populateProfile()">
+
+    <div class="wrapper">
+        <div class="sidebar">
+            <h2 class="welcome">Admin</h2>
+            <ul>
+                <li class="selected"><a href="ProfilePage.html"><i class="fas fa-user-alt"></i>Profile</a></li>
+                <li><a href="mentorPage.html"><i class="fas fa-home"></i>Home</a></li>
+                <li><a href="client1.html"><i class="far fa-comments"></i> &nbsp;Classroom</a></li>
+                <li><a href="Topics.html"><i class="fas fa-pencil-ruler"></i>Topics</a></li>
+                <li><a href="reporting.html"><i class="fas fa-table"></i>Admin</a></li>
+                <li><a href="index.html"><i class="fas fa-door-closed"></i>Log Out</a></li>
+            </ul>
         </div>
-        <form id="profileForm">
-            <table id="profileTableId">
-                <tr>
-                    <td>Profile Picture</td>
-                    <td><input type="file" id="upload" onchange="changePic(value)" accept="image/*" /></td>
-                </tr>
-                <tr>
-                    <td>First Name</td>
-                    <td><input type="text" id="fNameId"></td>
-                </tr>
-                <tr>
-                    <td>Last Name</td>
-                    <td><input type="text" id="lNameId"></td>
-                </tr>
-                <tr>
-                    <td>Phone</td>
-                    <td><input type="text" id="phoneId"></td>
-                </tr>
-                <tr>
-                    <td>Email</td>
-                    <td><input type="text" id="emailId"></td>
-                </tr>
-                <tr>
-                    <td>Bio</td>
-                    <td><input type="text" id="bioId"></td>
-                </tr>
-                <tr>
-                    <td>Account Type</td>
-                    <td>
-                        <select id="mentorStatusId" onchange="profileType(value)">
-                            <option value=""></option>
-                            <option value="mentor">Mentor</option>
-                            <option value="mentee">Mentee</option>
-                            <option value="both">Both</option>
-                        </select>
-                    </td>
-                </tr>
-            </table>
-            <input id="btn" type="submit" value="Create Profile" onclick="gatherInfo()" />
-        </form>
-    </div>
-    <div id="skillsInputs">
-        <table>
-            <tr>
-                <td>Skills</td>
-            </tr>
-            <tr>
-                <td><input type="text" id="skill1" /></td>
-            </tr>
-            <tr>
-                <td><input type="text" id="skill2" /></td>
-            </tr>
-            <tr>
-                <td><input type="text" id="skill3" /></td>
-            </tr>
-            <tr>
-                <td><input type="text" id="skill4" /></td>
-            </tr>
-            <tr>
-                <td><input type="text" id="skill5" /></td>
-            </tr>
+        <div class="main_content">
+            <div class="header">
+                <p class="title">Profile</p>
+            </div>
+            <div class="info">
+                <div class="container mb-5 mt-3">
+                    <div id="info">
+                        <div id="profile-container">
+                            <image id="profileImage" src="pizza.jpg" />
+                        </div>
+                        <form id="profileForm">
+                            <table id="profileTableId">
+                                <tr>
+                                    <td>Profile Picture</td>
+                                    <td><input type="file" id="upload" onchange="changePic(value)" accept="image/*" /></td>
+                                </tr>
+                                <tr>
+                                    <td>First Name</td>
+                                    <td><input type="text" id="fNameId"></td>
+                                </tr>
+                                <tr>
+                                    <td>Last Name</td>
+                                    <td><input type="text" id="lNameId"></td>
+                                </tr>
+                                <tr>
+                                    <td>Phone</td>
+                                    <td><input type="text" id="phoneId"></td>
+                                </tr>
+                                <tr>
+                                    <td>Email</td>
+                                    <td><input type="text" id="emailId"></td>
+                                </tr>
+                                <tr>
+                                    <td>Bio</td>
+                                    <td><input type="text" id="bioId"></td>
+                                </tr>
+                                <tr>
+                                    <td>Account Type</td>
+                                    <td>
+                                        <select id="mentorStatusId" onchange="profileType(value)">
+                                            <option value=""></option>
+                                            <option value="mentor">Mentor</option>
+                                            <option value="mentee">Mentee</option>
+                                            <option value="both">Both</option>
+                                        </select>
+                                    </td>
+                                </tr>
+                            </table>
 
-        </table>
-    </div>
-    <div id="topicsInputs">
-        <table>
-            <tr>
-                <td>Topics You Need Help In</td>
-            </tr>
-            <tr>
-                <td><input type="text" id="topic1" /></td>
-            </tr>
-            <tr>
-                <td><input type="text" id="topic2" /></td>
-            </tr>
-            <tr>
-                <td><input type="text" id="topic3" /></td>
-            </tr>
-            <tr>
-                <td><input type="text" id="topic4" /></td>
-            </tr>
-            <tr>
-                <td><input type="text" id="topic5" /></td>
-            </tr>
+                        </form>
+                    </div>
+                    <div id="skillsInputs">
+                        <table>
+                            <tr>
+                                <td>Skills</td>
+                            </tr>
+                            <tr>
+                                <td><input type="text" id="skill1" /></td>
+                            </tr>
+                            <tr>
+                                <td><input type="text" id="skill2" /></td>
+                            </tr>
+                            <tr>
+                                <td><input type="text" id="skill3" /></td>
+                            </tr>
+                            <tr>
+                                <td><input type="text" id="skill4" /></td>
+                            </tr>
+                            <tr>
+                                <td><input type="text" id="skill5" /></td>
+                            </tr>
 
-        </table>
+                        </table>
+                    </div>
+                    <div id="topicsInputs">
+                        <table>
+                            <tr>
+                                <td>Topics You Need Help In</td>
+                            </tr>
+                            <tr>
+                                <td><input type="text" id="topic1" /></td>
+                            </tr>
+                            <tr>
+                                <td><input type="text" id="topic2" /></td>
+                            </tr>
+                            <tr>
+                                <td><input type="text" id="topic3" /></td>
+                            </tr>
+                            <tr>
+                                <td><input type="text" id="topic4" /></td>
+                            </tr>
+                            <tr>
+                                <td><input type="text" id="topic5" /></td>
+                            </tr>
+
+                        </table>
+                    </div>
+                    <input id="btn" class="btn" type="submit" value="Create Profile" onclick="gatherInfo()" />
+                </div>
+            </div>
+        </div>
     </div>
 
 
