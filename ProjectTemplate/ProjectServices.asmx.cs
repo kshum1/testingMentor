@@ -19,9 +19,9 @@ namespace ProjectTemplate
 		////////////////////////////////////////////////////////////////////////
 		///replace the values of these variables with your database credentials
 		////////////////////////////////////////////////////////////////////////
-		private string dbID = "cis440template";
-		private string dbPass = "!!Cis440";
-		private string dbName = "cis440template";
+		private string dbID = "group15";
+		private string dbPass = "!!Group15";
+		private string dbName = "group15";
 		////////////////////////////////////////////////////////////////////////
 		
 		////////////////////////////////////////////////////////////////////////
@@ -43,7 +43,7 @@ namespace ProjectTemplate
 		{
 			try
 			{
-				string testQuery = "select * from test";
+				string testQuery = "select * from Customer";
 
 				////////////////////////////////////////////////////////////////////////
 				///here's an example of using the getConString method!
@@ -62,5 +62,217 @@ namespace ProjectTemplate
 				return "Something went wrong, please check your credentials and db name and try again.  Error: "+e.Message;
 			}
 		}
+		[WebMethod]
+		public bool LogOn(string uid, string pass)
+		{
+			//LOGIC: pass the parameters into the database to see if an account
+			//with these credentials exist.  If it does, then return true.  If
+			//it doesn't, then return false
+
+			//we return this flag to tell them if they logged in or not
+			bool success = false;
+
+			//our connection string comes from our web.config file like we talked about earlier
+			string sqlConnectString = getConString();
+			//here's our query.  A basic select with nothing fancy.  Note the parameters that begin with @
+			string sqlSelect = "SELECT id FROM users WHERE userid=@idValue and pass=@passValue";
+
+			//set up our connection object to be ready to use our connection string
+			MySqlConnection sqlConnection = new MySqlConnection(sqlConnectString);
+			//set up our command object to use our connection, and our query
+			MySqlCommand sqlCommand = new MySqlCommand(sqlSelect, sqlConnection);
+
+			//tell our command to replace the @parameters with real values
+			//we decode them because they came to us via the web so they were encoded
+			//for transmission (funky characters escaped, mostly)
+			sqlCommand.Parameters.AddWithValue("@idValue", HttpUtility.UrlDecode(uid));
+			sqlCommand.Parameters.AddWithValue("@passValue", HttpUtility.UrlDecode(pass));
+
+			//a data adapter acts like a bridge between our command object and 
+			//the data we are trying to get back and put in a table object
+			MySqlDataAdapter sqlDa = new MySqlDataAdapter(sqlCommand);
+			//here's the table we want to fill with the results from our query
+			DataTable sqlDt = new DataTable();
+			//here we go filling it!
+			sqlDa.Fill(sqlDt);
+			//check to see if any rows were returned.  If they were, it means it's 
+			//a legit account
+			if (sqlDt.Rows.Count > 0)
+			{
+				//flip our flag to true so we return a value that lets them know they're logged in
+				success = true;
+			}
+			//return the result!
+			return success;
+		}
+
+		[WebMethod]
+		public void RequestAccount(string uid, string pass)
+		{
+			string sqlConnectString = getConString();
+
+			//string sqlConnectString = System.Configuration.ConfigurationManager.ConnectionStrings["myDB"].ConnectionString;
+			//the only thing fancy about this query is SELECT LAST_INSERT_ID() at the end.  All that
+			//does is tell mySql server to return the primary key of the last inserted row.
+			string sqlSelect = "insert into users (userid, pass) " +
+				"values(@idValue, @passValue); SELECT LAST_INSERT_ID();";
+
+			MySqlConnection sqlConnection = new MySqlConnection(sqlConnectString);
+			MySqlCommand sqlCommand = new MySqlCommand(sqlSelect, sqlConnection);
+
+			sqlCommand.Parameters.AddWithValue("@idValue", HttpUtility.UrlDecode(uid));
+			sqlCommand.Parameters.AddWithValue("@passValue", HttpUtility.UrlDecode(pass));
+
+			//this time, we're not using a data adapter to fill a data table.  We're just
+			//opening the connection, telling our command to "executescalar" which says basically
+			//execute the query and just hand me back the number the query returns (the ID, remember?).
+			//don't forget to close the connection!
+			sqlConnection.Open();
+			//we're using a try/catch so that if the query errors out we can handle it gracefully
+			//by closing the connection and moving on
+			try
+			{
+				int accountID = Convert.ToInt32(sqlCommand.ExecuteScalar());
+				//here, you could use this accountID for additional queries regarding
+				//the requested account.  Really this is just an example to show you
+				//a query where you get the primary key of the inserted row back from
+				//the database!
+			}
+			catch (Exception e)
+			{
+			}
+			sqlConnection.Close();
+		}
+
+		[WebMethod]
+		public bool phoneSearch(string phoneNum)
+		{
+			// LOGIC: This will take the phone number provided and search for it in the database.
+			//The return is an integer which is the num of rows that the query finds in the database.
+
+			bool success = false;
+
+			//our connection string comes from our web.config file like we talked about earlier
+			string sqlConnectString = getConString();
+			//here's our query.  A basic select with nothing fancy.  Note the parameters that begin with @
+			string sqlSelect = "SELECT CID FROM Customer WHERE CPhone=@cPhoneValue";
+
+			//set up our connection object to be ready to use our connection string
+			MySqlConnection sqlConnection = new MySqlConnection(sqlConnectString);
+			//set up our command object to use our connection, and our query
+			MySqlCommand sqlCommand = new MySqlCommand(sqlSelect, sqlConnection);
+
+			//tell our command to replace the @parameters with real values
+			//we decode them because they came to us via the web so they were encoded
+			//for transmission (funky characters escaped, mostly)
+			sqlCommand.Parameters.AddWithValue("@cPhoneValue", HttpUtility.UrlDecode(phoneNum));
+
+			//a data adapter acts like a bridge between our command object and 
+			//the data we are trying to get back and put in a table object
+			MySqlDataAdapter sqlDa = new MySqlDataAdapter(sqlCommand);
+			//here's the table we want to fill with the results from our query
+			DataTable sqlDt = new DataTable();
+			//here we go filling it!
+			sqlDa.Fill(sqlDt);
+			//check to see if any rows were returned.  If they were, it means it's 
+			//a legit account
+			if (sqlDt.Rows.Count > 0)
+			{
+				//flip our flag to true so we return a value that lets them know they're logged in
+				success = true;
+			}
+			//return the result!
+			return success;
+		}
+
+		[WebMethod]
+		public void insertCustomer(string first, string last, string phone, string email)
+		{
+			string sqlConnectString = getConString();
+
+			//string sqlConnectString = System.Configuration.ConfigurationManager.ConnectionStrings["myDB"].ConnectionString;
+			//the only thing fancy about this query is SELECT LAST_INSERT_ID() at the end.  All that
+			//does is tell mySql server to return the primary key of the last inserted row.
+			string sqlSelect = "insert into customers (CFName, CLName, CPhone, CEmail) " +
+				"values(@CFNameValue, @CLNameValue, @CPhoneValue, @CEmailValue); SELECT LAST_INSERT_ID();";
+
+			MySqlConnection sqlConnection = new MySqlConnection(sqlConnectString);
+			MySqlCommand sqlCommand = new MySqlCommand(sqlSelect, sqlConnection);
+
+			sqlCommand.Parameters.AddWithValue("@CFNameValue", HttpUtility.UrlDecode(first));
+			sqlCommand.Parameters.AddWithValue("@CLNameValue", HttpUtility.UrlDecode(last));
+			sqlCommand.Parameters.AddWithValue("@CPhoneValue", HttpUtility.UrlDecode(phone));
+			sqlCommand.Parameters.AddWithValue("@CEmailValue", HttpUtility.UrlDecode(email));
+
+			//this time, we're not using a data adapter to fill a data table.  We're just
+			//opening the connection, telling our command to "executescalar" which says basically
+			//execute the query and just hand me back the number the query returns (the ID, remember?).
+			//don't forget to close the connection!
+			sqlConnection.Open();
+			//we're using a try/catch so that if the query errors out we can handle it gracefully
+			//by closing the connection and moving on
+			try
+			{
+				int accountID = Convert.ToInt32(sqlCommand.ExecuteScalar());
+				//here, you could use this accountID for additional queries regarding
+				//the requested account.  Really this is just an example to show you
+				//a query where you get the primary key of the inserted row back from
+				//the database!
+			}
+			catch (Exception e)
+			{ 
+			}
+			sqlConnection.Close();
+		}
+
+		[WebMethod(EnableSession = true)]
+		public void CreateProfile(string UserFirst, string UserLast, string UserPhone, string UserEmail, string PictureURL, string MentorStatus, string Skills, string Assistance, string AboutMe, string AccountStatus)
+		{
+			string sqlConnectString = getConString();
+
+			//string sqlConnectString = System.Configuration.ConfigurationManager.ConnectionStrings["myDB"].ConnectionString;
+			//the only thing fancy about this query is SELECT LAST_INSERT_ID() at the end.  All that
+			//does is tell mySql server to return the primary key of the last inserted row.
+			string sqlSelect = "insert into UserProfiles (UserFirst, UserLast, UserPhone, UserEmail, PictureURL, MentorStatus, Skills, Assistance, AboutMe, AccountStatus)" +
+				"values(@UserFirst, @UserLast, @UserPhone, @UserEmail, @PictureURL, @MentorStatus, @Skills, @Assistance, @AboutMe, @AccountStatus); SELECT LAST_INSERT_ID();";
+
+			MySqlConnection sqlConnection = new MySqlConnection(sqlConnectString);
+			MySqlCommand sqlCommand = new MySqlCommand(sqlSelect, sqlConnection);
+
+			sqlCommand.Parameters.AddWithValue("@UserFirst", HttpUtility.UrlDecode(UserFirst));
+			sqlCommand.Parameters.AddWithValue("@UserLast", HttpUtility.UrlDecode(UserLast));
+			sqlCommand.Parameters.AddWithValue("@UserPhone", HttpUtility.UrlDecode(UserPhone));
+			sqlCommand.Parameters.AddWithValue("@UserEmail", HttpUtility.UrlDecode(UserEmail));
+			sqlCommand.Parameters.AddWithValue("@PictureUrl", HttpUtility.UrlDecode(PictureURL));
+			sqlCommand.Parameters.AddWithValue("@MentorStatus", HttpUtility.UrlDecode(MentorStatus));
+			sqlCommand.Parameters.AddWithValue("@Skills", HttpUtility.UrlDecode(Skills));
+			sqlCommand.Parameters.AddWithValue("@Assistance", HttpUtility.UrlDecode(Assistance));
+			sqlCommand.Parameters.AddWithValue("@AboutMe", HttpUtility.UrlDecode(AboutMe));
+			sqlCommand.Parameters.AddWithValue("@AccountStatus", HttpUtility.UrlDecode(AccountStatus));
+
+
+			//this time, we're not using a data adapter to fill a data table.  We're just
+			//opening the connection, telling our command to "executescalar" which says basically
+			//execute the query and just hand me back the number the query returns (the ID, remember?).
+			//don't forget to close the connection!
+			sqlConnection.Open();
+			//we're using a try/catch so that if the query errors out we can handle it gracefully
+			//by closing the connection and moving on
+			try
+			{
+				int accountID = Convert.ToInt32(sqlCommand.ExecuteScalar());
+				//here, you could use this accountID for additional queries regarding
+				//the requested account.  Really this is just an example to show you
+				//a query where you get the primary key of the inserted row back from
+				//the database!
+			}
+			catch (Exception e)
+			{
+
+			}
+			sqlConnection.Close();
+		}
+
+
 	}
 }

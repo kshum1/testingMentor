@@ -1,0 +1,247 @@
+<html>
+    <head>
+        <title>Classroom Page</title>
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
+        <script src="http://code.jquery.com/jquery-latest.min.js"></script>
+        <script src="/socket.io/socket.io.js"></script>
+        <script src="https://kit.fontawesome.com/b696c7130a.js" crossorigin="anonymous"></script>
+        <style>
+            @import url('https://fonts.googleapis.com/css2?family=Baloo+Thambi+2:wght@500&display=swap');
+            #messageArea{
+                display:none;
+            }
+
+            *{
+              margin: 0;
+              padding: 0;
+              box-sizing: border-box;
+              list-style: none;
+              text-decoration: none;
+              font-family:'Baloo Thambi 2', cursive;
+             }
+    
+            body{
+                background: #222244;
+    
+            }
+    
+            .wrapperr{
+                display: flex;
+                position: relative;
+    
+            }
+    
+            .wrapperr .sidebar{
+                position: fixed;
+                width: 14vw;
+                height: 100%;
+                background-image: linear-gradient(to bottom right, #CC2E5D, #FF5858);
+                padding: 18px 0;
+            }
+    
+            .wrapperr .sidebar h2{
+                color: #FFF;
+                text-transform: uppercase;
+                text-align: center;
+                margin-bottom: 30px;
+            }
+    
+            .wrapperr .sidebar ul li{
+                padding: 15px;
+                border-bottom: 1px solid rgba(0,0,0,0.05);
+                border-top: 1px solid rgba(225,225,225,0.05);
+    
+            }
+    
+            .wrapperr .sidebar ul li a{
+                color: #bdb8d7;
+                display: block;
+                font-size: 19px;
+            }
+    
+            .wrapperr .sidebar ul li a .fas{
+                width: 25px;
+    
+            }
+    
+            .wrapperr .sidebar ul li:hover{
+                background:#CC2E5D;
+            }
+    
+            .wrapperr .sidebar ul li:hover a{
+                color: #FFF;
+            }
+            .wrapperr .main_content{
+                width: 100%;
+                margin-left: 200px;
+                color: #FFF;
+            }
+    
+            .wrapperr .main_content .header{
+                padding: 20px;
+                background: #fff;
+                color: #717171;
+                border-bottom: 1px solid #e0e4e8;
+            }
+    
+            p.title, h2.welcome{
+                font-size: 3vh;
+            }
+            
+            h3{
+                color: black;
+            }
+
+            .list-group.item {
+                color: black;
+            }
+
+            div.well{
+                color: black;
+            }
+
+            li.selected {
+            background: #CC2E5D;
+            }
+
+         </style>
+    </head>
+    <body>
+        <div class="wrapperr">
+            <div class="sidebar">
+                <h2 class="welcome">Welcome<br /> Ruben!</h2>
+                <ul>
+                    <li><a href="ProfilePage.html"><i class="fas fa-user-alt"></i>Profile</a></li>
+                    <li><a href="mentorPage.html"><i class="fas fa-home"></i>Home</a></li>
+                    <li class="selected"><a href="client.html"><i class="far fa-comments"></i> &nbsp;Classroom</a></li>
+                    <li><a href="Topics.html"><i class="fas fa-pencil-ruler"></i>Topics</a></li>
+                    <li><a href="index.html"><i class="fas fa-door-closed"></i>Log Out</a></li>
+                </ul>
+            </div>
+            <div class="main_content">
+                <div class="header"><p class="title">&nbsp;Team8 Classroom Discussion</p>
+                </div>
+                <div class="info">
+                    <div>
+                        <div class="container">
+                            <div id="userFormArea" class="row">
+                                <div class="col-md-12">
+                                    <form id="userForm">
+                                        <div class="form-group">
+                                            <label>Enter Username</label>
+                                            <input class="form-control" id="username"/>
+                                            <select id="cars" class="form-control" style="width: 20%">
+                                                <option value="C#">C#</option>
+                                            </select>
+                                            <br/>
+                                            <input type="submit" class="btn btn-primary" value="Enter Chatroom"/>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                            <div id="messageArea" class="row">
+                                <div class="col-md-4">
+                                    <div class="well">
+                                        <h3>Talking in: C# Session</h3>
+                                        <ul class="list-group" id="users"></ul>
+                                    </div>
+                                </div>
+                                <div class="col-md-8">
+                                    <div class="chat" id="chat"></div>
+                
+                                    <form id="messageForm">
+                                        <div class="form-group">
+                                            <label>Enter Message</label>
+                                            <textarea class="form-control" id="message"></textarea>
+                                            <br/>
+                                            <input type="submit" class="btn btn-primary" value="Send Message"/>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!--
+        <div class="container">
+            <div id="userFormArea" class="row">
+                <div class="col-md-12">
+                    <form id="userForm">
+                        <div class="form-group">
+                            <label>Enter Username</label>
+                            <input class="form-control" id="username"/>
+                            <br/>
+                            <input type="submit" class="btn btn-primary" value="Enter Chatroom"/>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            <div id="messageArea" class="row">
+                <div class="col-md-4">
+                    <div class="well">
+                        <h3>Online Users</h3>
+                        <ul class="list-group" id="users"></ul>
+                    </div>
+                </div>
+                <div class="col-md-8">
+                    <div class="chat" id="chat"></div>
+
+                    <form id="messageForm">
+                        <div class="form-group">
+                            <label>Enter Message</label>
+                            <textarea class="form-control" id="message"></textarea>
+                            <br/>
+                            <input type="submit" class="btn btn-primary" value="Send Message"/>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    -->
+        <script>
+            $(function(){
+                var socket = io.connect();
+                var $messageForm = $('#messageForm');
+                var $message = $('#message');
+                var $chat = $('#chat');
+                var $messageArea = $('#messageArea');
+                var $userFormArea = $('#userFormArea');
+                var $userForm = $('#userForm');
+                var $users = $('#users');
+                var $username = $('#username');
+
+                $messageForm.submit(function(e){
+                    e.preventDefault();
+                    socket.emit('send message', $message.val());
+                    $message.val('');
+                });
+
+                socket.on('new message', function(data){
+                    $chat.append('<div class="well"><strong>'+data.user+'</strong>: '+data.msg+'</div>')
+                });
+
+                $userForm.submit(function(e){
+                    e.preventDefault();
+                    socket.emit('new user', $username.val(), function(data){
+                        if(data){
+                            $userFormArea.hide();
+                            $messageArea.show();
+                        }
+                    });
+                    $username.val('');
+                });
+
+                socket.on('get users', function(data){
+                    var html = '';
+                    for(i = 0; i < data.length; i++){
+                        html += '<li class="list-group-item">'+data[i]+'</li>';
+                    }
+                    $users.html(html);
+                });
+
+            });
+        </script>
+    </body>
+</html>

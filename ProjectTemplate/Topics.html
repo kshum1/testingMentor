@@ -1,0 +1,346 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>Flagged Topics</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.10.19/css/dataTables.bootstrap4.min.css" />
+    <script src="https://kit.fontawesome.com/b696c7130a.js" crossorigin="anonymous"></script>
+    <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+    <script src="https://cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.10.19/js/dataTables.bootstrap4.min.js"></script>
+    <script>
+        const toggleModal = () => {
+            document.getElementsByClassName('.modal')
+                .classList.toggle('modal-hide');
+        };
+
+        var el = document.getElementById('show-modal');
+        if (el) {
+            el.addEventListener('onclick', toggleModal, false);
+        }
+    </script>
+
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Baloo+Thambi+2:wght@500&display=swap');
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            list-style: none;
+            text-decoration: none;
+            font-family: 'Baloo Thambi 2', cursive;
+        }
+
+        body {
+            background: #222244;
+        }
+
+        .wrapper {
+            display: flex;
+            position: relative;
+        }
+
+            .wrapper .sidebar {
+                position: fixed;
+                width: 200px;
+                height: 100%;
+                background-image: linear-gradient(to bottom right, #CC2E5D, #FF5858);
+                padding: 30px 0;
+            }
+
+                .wrapper .sidebar h2 {
+                    color: #FFF;
+                    text-transform: uppercase;
+                    text-align: center;
+                    margin-bottom: 30px;
+                }
+
+                .wrapper .sidebar ul li {
+                    padding: 15px;
+                    border-bottom: 1px solid rgba(0,0,0,0.05);
+                    border-top: 1px solid rgba(225,225,225,0.05);
+                }
+
+                    .wrapper .sidebar ul li a {
+                        color: #bdb8d7;
+                        display: block;
+                    }
+
+                        .wrapper .sidebar ul li a .fas {
+                            width: 25px;
+                        }
+
+                    .wrapper .sidebar ul li:hover {
+                        background: #CC2E5D;
+                    }
+
+                        .wrapper .sidebar ul li:hover a {
+                            color: #FFF;
+                        }
+
+            .wrapper .main_content {
+                width: 100%;
+                margin-left: 200px;
+                color: #FFF;
+            }
+
+                .wrapper .main_content .header {
+                    padding: 20px;
+                    background: #fff;
+                    color: #717171;
+                    border-bottom: 1px solid #e0e4e8;
+                }
+
+        tbody, thead, tfoot {
+            color: #FFF;
+        }
+
+        th.center {
+            text-align: center;
+        }
+
+        h2.welcome, p.title {
+            font-size: 3vh;
+        }
+
+        li.selected {
+            background: #CC2E5D;
+        }
+
+        tr:nth-child(even) {
+            background: #222250;
+        }
+
+        button.session {
+            background-color: green;
+            color: #FFF;
+            border: none;
+            transition: all .3s ease;
+            cursor: pointer;
+        }
+
+            button.session:hover {
+                background-color: darkgreen;
+            }
+
+        .modal {
+            position: absolute;
+            top: 0;
+            height: 100%;
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-hide {
+            display: none;
+        }
+
+        .modal__contents {
+            background-color: #FFF;
+            padding: 2rem 4rem;
+        }
+
+            .modal__contents p {
+                color: black;
+            }
+
+        select {
+            width: 100%;
+            padding: .5rem;
+        }
+
+        #close {
+            width: 100%;
+            padding: .5REM;
+            background-color: green;
+            border: none;
+            color: #FFF;
+            transition: all .3s ease-in-out;
+        }
+
+            #close:hover {
+                background-color: darkgreen;
+            }
+
+        .close_bar span {
+            display: flex;
+            justify-content: flex-end;
+            color: black;
+            margin-right: -2rem;
+            margin-top: -1rem;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <div class="wrapper">
+        <div class="sidebar">
+            <h2 class="welcome">Welcome<br /> Ruben!</h2>
+            <ul>
+                <li><a href="ProfilePage.html"><i class="fas fa-user-alt"></i>Profile</a></li>
+                <li><a href="mentorPage.html"><i class="fas fa-home"></i>Home</a></li>
+                <li><a href="client.html"><i class="far fa-comments">&nbsp;&nbsp;</i>Classroom</a></li>
+                <li class="selected"><a href="Topics.html"><i class="fas fa-pencil-ruler"></i>Topics</a></li>
+                <li><a href="index.html"><i class="fas fa-door-closed"></i>Log Out</a></li>
+
+            </ul>
+        </div>
+        <div class="main_content">
+            <div class="header">
+                <p class="title">Currently Viewing: Flagged Topics from Mentees</p>
+            </div>
+            <div class="info">
+                <div class="container mb-5 mt-3">
+                    <table class="table table-striped table-bordered mydatatable" style="width: 100%">
+                        <thead>
+                            <tr>
+                                <th class="center" colspan="1" rowspan="2">Topic</th>
+                                <th class="center" colspan="3">Details</th>
+                            </tr>
+                            <tr>
+                                <th>Date Created</th>
+                                <th>Submitted By</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>JavaScript</td>
+                                <td>4/6/2020</td>
+                                <td>Kevin S.</td>
+                                <td><button type="button" class="session" onclick="toggleModal">Add to Session</button></td>
+                            </tr>
+                            <tr>
+                                <td>HTML</td>
+                                <td>4/6/2020</td>
+                                <td>Kevin S.</td>
+                                <td><button type="button" class="session" id="show-modal">Add to Session</button></td>
+                            </tr>
+                            <tr>
+                                <td>CSS</td>
+                                <td>4/6/2020</td>
+                                <td>Kevin S.</td>
+                                <td><button type="button" class="session" id="show-modal">Add to Session</button></td>
+                            </tr>
+                            <tr>
+                                <td>SQL</td>
+                                <td>4/4/2020</td>
+                                <td>Kevin S.</td>
+                                <td><button type="button" class="session" id="show-modal">Add to Session</button></td>
+                            </tr>
+                            <tr>
+                                <td>JQuery</td>
+                                <td>4/6/2020</td>
+                                <td>Kevin S.</td>
+                                <td><button type="button" class="session">Add to Session</button></td>
+                            </tr>
+                            <tr>
+                                <td>Uhhhh</td>
+                                <td>4/3/2020</td>
+                                <td>Kevin S.</td>
+                                <td><button type="button" class="session">Add to Session</button></td>
+                            </tr>
+                            <tr>
+                                <td>Python</td>
+                                <td>4/6/2020</td>
+                                <td>Kevin S.</td>
+                                <td><button type="button" class="session">Add to Session</button></td>
+                            </tr>
+                            <tr>
+                                <td>C#</td>
+                                <td>4/6/2020</td>
+                                <td>Kevin S.</td>
+                                <td><button type="button" class="session">Add to Session</button></td>
+                            </tr>
+                            <tr>
+                                <td>Something else</td>
+                                <td>4/2/2020</td>
+                                <td>Kevin S.</td>
+                                <td><button type="button" class="session">Add to Session</button></td>
+                            </tr>
+                            <tr>
+                                <td>MS Excel</td>
+                                <td>4/6/2020</td>
+                                <td>Hot Dog</td>
+                                <td><button type="button" class="session">Add to Session</button></td>
+                            </tr>
+                            <tr>
+                                <td>TSQL</td>
+                                <td>4/6/2020</td>
+                                <td>Kevin S.</td>
+                                <td><button type="button" class="session" id="show-modal">Add to Session</button></td>
+                            <tr>
+                                <td>Something else</td>
+                                <td>4/6/2020</td>
+                                <td>Kevin S.</td>
+                                <td><button type="button" class="session">Add to Session</button></td>
+                            </tr>
+                            <tr>
+                                <td>Something else</td>
+                                <td>4/6/2020</td>
+                                <td>Kevin S.</td>
+                                <td><button type="button" class="session">Add to Session</button></td>
+                            </tr>
+                            <tr>
+                                <td>Something else</td>
+                                <td>4/6/2020</td>
+                                <td>Kevin S.</td>
+                                <td><button type="button" class="session">Add to Session</button></td>
+                            </tr>
+                            <tr>
+                                <td>Something else</td>
+                                <td>4/1/2020</td>
+                                <td>Kevin S.</td>
+                                <td><button type="button" class="session">Add to Session</button></td>
+                            </tr>
+                            <tr>
+                                <td>Something else</td>
+                                <td>3/12/2020</td>
+                                <td>Kevin S.</td>
+                                <td><button type="button" class="session">Add to Session</button></td>
+                            </tr>
+                            </tr>
+                        </tbody>
+                        <tfoot>
+                            <tr>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+            </div>
+            <div class="modal modal-hide">
+                <div class="modal__contents">
+                    <div class="close_bar">
+                        <span>X</span>
+                    </div>
+                    <p>Please select a date to host a Classroom</p>
+                    <form>
+                        <select id="date" name="date">
+                            <option value="4-8-2020">Wednesday, 4/8/2020</option>
+                            <option value="4-9-2020">Thursday, 4/9/2020</option>
+                            <option value="4-10-2020">Friday, 4/10/2020</option>
+                            <option value="4-11-2020">Saturday, 4/11/2020</option>
+                        </select>
+                        <button type="button" id="close">Submit</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        $('.mydatatable').DataTable({
+            scrollY: 400,
+            scrollX: true,
+            scrollCollapse: true,
+            paging: false
+        });
+    </script>
+</body>
+</html>

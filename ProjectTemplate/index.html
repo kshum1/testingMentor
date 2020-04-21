@@ -1,43 +1,286 @@
 ﻿<!DOCTYPE html>
-<html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
 <head>
-	<meta charset="utf-8" />
-	<title></title>
-	<!--DO NOT FORGET THIS SCRIPT TAG SO YOU CAN USE JQUERY!!!!!-->
-	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <meta charset="utf-8" />
+    <title></title>
+    <!--DO NOT FORGET THIS SCRIPT TAG SO YOU CAN USE JQUERY!!!!!-->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <!--YOUR OWN JAVASCRIPT CAN GO RIGHT HERE-->
+    <script type="text/javascript">
 
-	<!--YOUR OWN JAVASCRIPT CAN GO RIGHT HERE-->
-	<script type="text/javascript">
-		function TestButtonHandler() {
-			var webMethod = "ProjectServices.asmx/TestConnection";
-			var parameters = "{}";
+        function showPass() {
+            var x = document.getElementById("txtpass");
+            var y = document.getElementById("showpass");
 
-			//jQuery ajax method
-			$.ajax({
-				type: "POST",
-				url: webMethod,
-				data: parameters,
-				contentType: "application/json; charset=utf-8",
-				dataType: "json",
-				success: function (msg) {
-					var responseFromServer = msg.d;
-					alert(responseFromServer);
-				},
-				error: function (e) {
-					alert("this code will only execute if javascript is unable to access the webservice");
-				}
-			});
-		}
-	</script>
-	<!--END OF YOUR OWN JAVASCRIPT-->
+            if (x.type === "password") {
+                x.type = "text";
+            } else {
+                x.type = "password";
+            }
+        }
 
-	<!--AND YOUR OWN CSS CAN GO HERE AS WELL-->
-	<style>
+        function TestButtonHandler() {
+            var webMethod = "ProjectServices.asmx/TestConnection";
+            var parameters = "{}";
 
-	</style>
-	<!--END OF YOUR OWN CSS-->
-</head >
+            //jQuery ajax method
+            $.ajax({
+                type: "POST",
+                url: webMethod,
+                data: parameters,
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (msg) {
+                    var responseFromServer = msg.d;
+                    alert(responseFromServer);
+                },
+                error: function (e) {
+                    alert("this code will only execute if javascript is unable to access the webservice");
+                }
+            });
+        }
+        function logon() {
+            var id = document.getElementById("txtemail").value;
+            var pass = document.getElementById("txtpass").value;
+
+            var webMethod = "ProjectServices.asmx/LogOn";
+            var parameters = "{\"uid\":\"" + encodeURI(id) + "\", \"pass\":\"" + encodeURI(pass) + "\"}";
+
+            //jQuery ajax method
+            $.ajax({
+                type: "POST",
+                url: webMethod,
+                data: parameters,
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (msg) {
+                    var responseFromServer = msg.d;
+                    if (responseFromServer == true) {
+                        alert("logged in!");
+                        window.location.replace('selection.html');
+                    }
+                    else {
+                        alert("bad credentials!");
+                    }
+                },
+                error: function (e) {
+                    alert("this code will only execute if javascript is unable to access the webservice");
+                }
+            });
+        }
+    </script>
+    <!--END OF YOUR OWN JAVASCRIPT-->
+    <!--AND YOUR OWN CSS CAN GO HERE AS WELL-->
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: montserrat, sans-serif;
+        }
+
+        .page-wrap {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        .left-panel {
+            flex: 1 1 66.666%;
+            background-image: linear-gradient(to bottom right, #CC2E5D, #FF5858);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+            .left-panel .loginbackground {
+                margin-bottom: 50px;
+            }
+
+            .left-panel h2 {
+                color: #FFF;
+                font-size: 48px;
+                font-weight: 400;
+                text-align: center;
+            }
+
+        .right-panel {
+            flex: 1 1 33.333%;
+            padding: 25px;
+        }
+
+            .right-panel h1 {
+                color: #FF5858;
+                font-size: 48px;
+                font-weight: 400;
+                margin-bottom: 50px;
+            }
+
+                .right-panel h1 strong {
+                    color: #CC2E5D;
+                    font-weight: 900;
+                }
+
+        .animated-form h3 {
+            color: #666;
+            font-size: 28px;
+            font-weight: 500;
+            margin-bottom: 45px;
+        }
+
+        .animated-form .form-group {
+            position: relative;
+            display: flex;
+            margin-bottom: 45px;
+        }
+
+        .form-group.flex-end {
+            justify-content: flex-end;
+        }
+
+        .animated-form .form-group label {
+            position: absolute;
+            top: 50%;
+            left: 0px;
+            transform: translateY(-50%);
+            color: #AAA;
+            font-size: 20px;
+            transition: 0.4s ease-out;
+        }
+
+        .animated-form .form-group input {
+            display: block;
+            width: 100%;
+            padding: 10px 0px;
+            border: none;
+            outline: none;
+            background: none;
+            border-bottom: 3px solid #AAA;
+            color: #666;
+            font-size: 20px;
+            transition: 0.4s ease-out;
+        }
+
+        .animated-form .form-group:focus-within label,
+        .animated-form .form-group.has-content label {
+            top: 0px;
+            transform: translateY(-100%);
+            color: #FF5858;
+        }
+
+        .animated-form .form-group:focus-within input,
+        .animated-form .form-group.has-content input {
+            border-bottom-color: #FF5858;
+        }
+
+        .animated-form .form-group.flex-end {
+            margin-bottom: 25px;
+        }
+
+        .btn1 {
+            background: none;
+            border: 2px solid #000;
+            font-family: "montserrat",sans-serif;
+            text-transform: uppercase;
+            padding: 12px 20px;
+            min-width: 200px;
+            margin: 10px;
+            cursor: pointer;
+            transition: color 0.4s linear;
+            position: relative;
+        }
+
+            .btn1:hover {
+                color: #FF5858;
+            }
+
+            .btn1::before {
+                content: "";
+                position: absolute;
+                left: 0;
+                top: 0;
+                width: 100%;
+                height: 100%;
+                background: #000;
+                z-index: -1;
+                transition: transform 0.5s;
+                transform-origin: 0 0;
+                transition-timing-function: cubic-bezier(0.5,1.6,0.4,0.7);
+            }
+
+            .btn1::before {
+                transform: scaleX(0);
+            }
+
+            .btn1::before {
+                transform: scaleY(0);
+            }
+
+        .animated-form .lost-pass a {
+            color: #FF5858;
+            font-size: 16px;
+            font-weight: 400;
+            text-decoration: none;
+            padding-bottom: 5px;
+            border-bottom: 1px solid transparent;
+        }
+
+            .animated-form .lost-pass a:hover {
+                border-bottom-color: #FF5858;
+            }
+    </style>
+    <!--END OF YOUR OWN CSS-->
+</head>
 <body>
-	<button onclick="javascript: TestButtonHandler();">Click here to test connection!</button>
+    <div class="page-wrap">
+        <div class="left-panel">
+            <div class="loginbackground">
+                <img src="background2.jpeg" alt="pic" class="image" />
+            </div>
+            <h2>Work Smarter with Team8</h2>
+        </div>
+
+        <div class="right-panel">
+            <h1>
+                <strong>Team8</strong>
+                Welcome!
+            </h1>
+            <form class="animated-form">
+                <h3>Login to your account</h3>
+                <div class="form-group">
+                    <label for="username"></label>
+                    <input type="text" id="txtemail" class="username" placeholder="Username" />
+                </div>
+                <div class="form-group">
+                    <label for="password"></label>
+                    <input type="password" id="txtpass" class="password" placeholder="Password" />
+                </div>
+                <div class="form-group flex-end">
+                    <button type="button" class="btn1" id="showpass" onclick="showPass()">Show Password</button>
+                    <button type="button" class="btn1" onclick="javascript:logon();">Log In</button>
+                </div>
+                <div class="lost-pass">
+                    <a href="#" class="link">Forgot your password?</a>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!--
+    <div class="login">
+        <img src="pizzawoo.jpg" alt="Alternate Text" class="user" />
+        <h2 style="margin-bottom:20px">Employee Login</h2>
+        <div>
+            <label for="user" class="labelemail">User</label>
+            <input type="text" class="txtemail" id="txtemail" />
+            <label for="pass" class="labelpass">Password</label>
+            <input type="password" class="txtpass" id="txtpass" />
+            <button class="submit" onclick="javascript: logon();">Log On!</button>
+        </div>
+    </div>
+    -->
 </body>
-</html >
+</html>

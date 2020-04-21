@@ -90,9 +90,32 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="addEmployee.html" />
+    <Content Include="background2.jpeg" />
+    <Content Include="cheesePizza.jpeg" />
+    <Content Include="cheese_pizza.jpg" />
+    <Content Include="chicken_pizza.jpg" />
+    <Content Include="form.html" />
     <Content Include="Global.asax" />
+    <Content Include="home.html" />
     <Content Include="index.html" />
+    <Content Include="loginbackground.jpg" />
+    <Content Include="menteePage.html" />
+    <Content Include="mentorPage.html" />
+    <Content Include="menu.html" />
+    <Content Include="menuStyle.css" />
+    <Content Include="pizza.jpg" />
+    <Content Include="pizzawoo.jpg" />
+    <Content Include="ProfilePage.html" />
     <Content Include="ProjectServices.asmx" />
+    <Content Include="restaurantblack2.jpg" />
+    <Content Include="sausage_pizza.jpg" />
+    <Content Include="selection.html" />
+    <Content Include="spinach_pizza.jpg" />
+    <Content Include="mainlogin.css" />
+    <Content Include="supreme-pizza.jpeg" />
+    <Content Include="Topics.html" />
+    <Content Include="veggie_pizza.jpg" />
     <Content Include="Web.config" />
   </ItemGroup>
   <ItemGroup>
@@ -133,9 +156,9 @@
         <WebProjectProperties>
           <UseIIS>True</UseIIS>
           <AutoAssignPort>True</AutoAssignPort>
-          <DevelopmentServerPort>50287</DevelopmentServerPort>
+          <DevelopmentServerPort>0</DevelopmentServerPort>
           <DevelopmentServerVPath>/</DevelopmentServerVPath>
-          <IISUrl>http://localhost:50287/</IISUrl>
+          <IISUrl>http://localhost:51755/</IISUrl>
           <NTLMAuthentication>False</NTLMAuthentication>
           <UseCustomServer>False</UseCustomServer>
           <CustomServerUrl>
