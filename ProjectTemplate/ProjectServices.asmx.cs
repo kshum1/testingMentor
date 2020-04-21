@@ -273,6 +273,143 @@ namespace ProjectTemplate
 			sqlConnection.Close();
 		}
 
+		[WebMethod(EnableSession = true)]
+		public Result[] runQuery()
+		{
+
+			DataTable sqldata = new DataTable("results");
+			string sqlConnectString = getConString();
+			Console.WriteLine("Connected");
+			string sqlSelect = "select TeacherFirst, TeacherLast, count(ClassNum) as NumOfClasses, sum(ClassLength) as TotalClassTime," +
+					" count(Distinct Subj) as NumOfSubj, sum(Attendees) as TotalParticipants from Classes group by TeacherLast;";
+			Console.WriteLine("Sql Statement " + sqlSelect);
+			MySqlConnection sqlConnection = new MySqlConnection(sqlConnectString);
+			MySqlCommand sqlCommand = new MySqlCommand(sqlSelect, sqlConnection);
+			MySqlDataAdapter sqlDt = new MySqlDataAdapter(sqlCommand);
+			sqlDt.Fill(sqldata);
+			Console.WriteLine("Table " + sqldata);
+			sqlConnection.Open();
+			try
+			{
+
+				List<Result> results = new List<Result>();
+				for (int i = 0; i < sqldata.Rows.Count; i++)
+				{
+					results.Add(new Result
+					{
+						firstName = sqldata.Rows[i]["TeacherFirst"].ToString(),
+						lastName = sqldata.Rows[i]["TeacherLast"].ToString(),
+						numOfClasses = Convert.ToInt32(sqldata.Rows[i]["NumOfClasses"]),
+						time = Convert.ToInt32(sqldata.Rows[i]["TotalClassTime"]),
+						numOfSubjects = Convert.ToInt32(sqldata.Rows[i]["NumOfSubj"]),
+						numOfAttendees = Convert.ToInt32(sqldata.Rows[i]["TotalParticipants"])
+
+					});
+					Console.WriteLine("List " + results);
+				}
+				Console.WriteLine("List " + results);
+				return results.ToArray();
+			}
+			catch (Exception e)
+			{
+				return new Result[0];
+			}
+
+		}
+
+		[WebMethod]
+		public User PopulateProfile(string uid, string pass)
+		{
+			string sqlConnectString = getConString();
+			//here's our query.  A basic select with nothing fancy.  Note the parameters that begin with @
+			string sqlSelect = "SELECT * FROM users WHERE userid=@idValue and pass=@passValue";
+
+			//set up our connection object to be ready to use our connection string
+			MySqlConnection sqlConnection = new MySqlConnection(sqlConnectString);
+			//set up our command object to use our connection, and our query
+			MySqlCommand sqlCommand = new MySqlCommand(sqlSelect, sqlConnection);
+
+			//tell our command to replace the @parameters with real values
+			//we decode them because they came to us via the web so they were encoded
+			//for transmission (funky characters escaped, mostly)
+			sqlCommand.Parameters.AddWithValue("@idValue", HttpUtility.UrlDecode(uid));
+			sqlCommand.Parameters.AddWithValue("@passValue", HttpUtility.UrlDecode(pass));
+
+			//a data adapter acts like a bridge between our command object and 
+			//the data we are trying to get back and put in a table object
+			MySqlDataAdapter sqlDa = new MySqlDataAdapter(sqlCommand);
+			//here's the table we want to fill with the results from our query
+			DataTable sqlDt = new DataTable();
+			//here we go filling it!
+			sqlDa.Fill(sqlDt);
+			//check to see if any rows were returned.  If they were, it means it's 
+			//a legit account
+			User user = new User();
+
+			if (sqlDt.Rows.Count > 0)
+			{
+				int r = sqlDt.Rows.Count - 1;
+
+				user.First = sqlDt.Rows[r]["First"].ToString();
+				user.Last = sqlDt.Rows[r]["Last"].ToString();
+				user.Email = sqlDt.Rows[r]["Email"].ToString();
+				user.URL = sqlDt.Rows[r]["URL"].ToString();
+				user.MentorStatus = sqlDt.Rows[r]["MentorStatus"].ToString();
+				user.Skills = sqlDt.Rows[r]["Skills"].ToString();
+				user.Bio = sqlDt.Rows[r]["Bio"].ToString();
+				user.AccountStatus = sqlDt.Rows[r]["AccountStatus"].ToString();
+
+
+			}
+			//return the result!
+			return user;
+		}
+
+		[WebMethod(EnableSession = true)]
+		public void CreateProfile(string uid, string pass, string UserFirst, string UserLast, string UserPhone, string UserEmail, string PictureURL, string MentorStatus, string Skills, string Assistance, string AboutMe, string AccountStatus)
+		{
+			string sqlConnectString = getConString();
+
+			//string sqlConnectString = System.Configuration.ConfigurationManager.ConnectionStrings["myDB"].ConnectionString;
+			//the only thing fancy about this query is SELECT LAST_INSERT_ID() at the end.  All that
+			//does is tell mySql server to return the primary key of the last inserted row.
+			string sqlSelect = "insert into users (userid, pass, UserFirst, UserLast, UserPhone, UserEmail, PictureURL, MentorStatus, Skills, Assistance, AboutMe, AccountStatus)" +
+				"values(@idValue, @passValue, @UserFirst, @UserLast, @UserPhone, @UserEmail, @PictureURL, @MentorStatus, @Skills, @Assistance, @AboutMe, @AccountStatus); SELECT LAST_INSERT_ID();";
+
+			MySqlConnection sqlConnection = new MySqlConnection(sqlConnectString);
+			MySqlCommand sqlCommand = new MySqlCommand(sqlSelect, sqlConnection);
+
+			sqlCommand.Parameters.AddWithValue("@idValue", HttpUtility.UrlDecode(uid));
+			sqlCommand.Parameters.AddWithValue("@passValue", HttpUtility.UrlDecode(pass));
+			sqlCommand.Parameters.AddWithValue("@UserFirst", HttpUtility.UrlDecode(UserFirst));
+			sqlCommand.Parameters.AddWithValue("@UserLast", HttpUtility.UrlDecode(UserLast));
+			sqlCommand.Parameters.AddWithValue("@UserPhone", HttpUtility.UrlDecode(UserPhone));
+			sqlCommand.Parameters.AddWithValue("@UserEmail", HttpUtility.UrlDecode(UserEmail));
+			sqlCommand.Parameters.AddWithValue("@PictureUrl", HttpUtility.UrlDecode(PictureURL));
+			sqlCommand.Parameters.AddWithValue("@MentorStatus", HttpUtility.UrlDecode(MentorStatus));
+			sqlCommand.Parameters.AddWithValue("@Skills", HttpUtility.UrlDecode(Skills));
+			sqlCommand.Parameters.AddWithValue("@Assistance", HttpUtility.UrlDecode(Assistance));
+			sqlCommand.Parameters.AddWithValue("@AboutMe", HttpUtility.UrlDecode(AboutMe));
+			sqlCommand.Parameters.AddWithValue("@AccountStatus", HttpUtility.UrlDecode(AccountStatus));
+
+
+
+			sqlConnection.Open();
+
+			try
+			{
+				int accountID = Convert.ToInt32(sqlCommand.ExecuteScalar());
+				//here, you could use this accountID for additional queries regarding
+				//the requested account.  Really this is just an example to show you
+				//a query where you get the primary key of the inserted row back from
+				//the database!
+			}
+			catch (Exception e)
+			{
+
+			}
+			sqlConnection.Close();
+		}
 
 	}
 }

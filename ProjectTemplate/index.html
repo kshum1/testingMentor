@@ -58,6 +58,8 @@
                     if (responseFromServer == true) {
                         alert("logged in!");
                         window.location.replace('selection.html');
+                        localStorage.setItem("UserId", id);
+                        localStorage.setItem("UserPass", pass);
                     }
                     else {
                         alert("bad credentials!");
